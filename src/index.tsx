@@ -16,7 +16,7 @@ const htmlRoot = document.getElementById('root') as HTMLElement;
 const reactRoot = ReactDOM.createRoot(htmlRoot);
 
 reactRoot.render(
-  process.env.REACT_APP_SCRICT_MODE === 'true' ? (
+  process.env.REACT_APP_STRICT_MODE === 'true' ? (
     <StrictMode>
       <BrowserRouter>
         <App />
