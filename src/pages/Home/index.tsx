@@ -1,20 +1,28 @@
-// Local imports
-import HelloWorld from '../../components/HelloWorld';
+import { useState } from 'react';
+import Chat from '../../components/Chat';
+import { User } from '../../util/types';
+
+const user: User = {
+  id: 1,
+  username: 'user',
+  firstname: 'first',
+  lastname: 'last',
+}
 
 // Component definition
 function HomePage() {
+  const [currentUser, setCurrentUser] = useState<User | null>(user);
+
   return (
-    <HelloWorld
-      box={{
-        sx: {
-          background: 'rgb(0, 30, 60)',
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-      }}
-    />
+    <>
+    {
+      currentUser ? (
+      <Chat user={currentUser}  onLogout={() => setCurrentUser(null)}/>
+    ) : (
+      <></>
+    )}
+    </>
+
   );
 }
 
