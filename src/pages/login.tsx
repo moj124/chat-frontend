@@ -1,5 +1,6 @@
 import { useState } from "react";
 import FormInput from "../components/FormInput";
+import { Link } from "react-router-dom";
 
 interface formConfig {
     id: number,
@@ -70,29 +71,36 @@ function Login() {
     
                                 />
                             )}
-                            <button 
-                                type="submit"
-                                disabled={isDisabled}
-                                className="
-                                    w-full 
-                                    sm:w-auto 
-                                    text-sm 
-                                    mt-5
-                                    px-5 
-                                    py-2.5 
-                                    text-center 
-                                    font-medium rounded-lg 
-                                    focus:ring-4 
-                                    focus:outline-none 
-                                    text-white 
-                                    bg-gray-700 
-                                    focus:ring-gray-300 
-                                    hover:bg-gray-800 
-                                    disabled:bg-gray-100 
-                                "
+                            <div
+                                className="flex flex-col sm:flex-row gap-5 mt-5 justify-between content-center"
                             >
-                                Submit
-                            </button>
+                                <button 
+                                    type="submit"
+                                    disabled={isDisabled}
+                                    className="
+                                        w-full 
+                                        sm:w-auto 
+                                        text-sm 
+                                        px-5 
+                                        py-2.5 
+                                        text-center 
+                                        font-medium rounded-lg 
+                                        focus:ring-4 
+                                        focus:outline-none 
+                                        text-white 
+                                        bg-gray-700 
+                                        focus:ring-gray-300 
+                                        hover:bg-gray-800 
+                                        disabled:bg-gray-100 
+                                    "
+                                >
+                                    Submit
+                                </button>
+                                <Link 
+                                    to='register'
+                                    className="content-center font-bold text-sm text-blue-400 hover:text-blue-600"
+                                >Register</Link>
+                            </div>
                         </form>
                     </div>
                 </div>
