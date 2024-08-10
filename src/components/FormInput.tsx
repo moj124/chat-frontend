@@ -1,26 +1,32 @@
 import { useState } from "react";
 
-
-interface formConfig {
-    key: number,
-    name: string,
-    value: string,
+type formConfigProp = {
+    displayName?: string,
+    pattern?: boolean,
     type: string,
+    regex?: RegExp | null,
     error?: string,
-    regex: RegExp,
     required: boolean,
-    onChange: (e: React.FocusEvent<HTMLInputElement>) => void;
+    value: string,
+    name: string,
+    showLabel: boolean,
+    onChange: (name: string, value: string) => void,
+    marginBottom: boolean,
 }
 
-function FormInput({name, type, required, error, onChange, value, regex}: formConfig) {
+function FormInput({showLabel, marginBottom, name, type, required, error, onChange, value, regex, pattern, displayName}: formConfigProp) {
     const [errorState, setErrorState] = useState(false);
     const [focused, setFocused] = useState(false);
-    
-    const pattern = regex.toString();
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange!(e.target.name, e.target.value);
+        if (regex?.test(e.target.value)) return setErrorState(false);
+    };
 
     const handleBlur = () => {
         setFocused(false);
-        if (!regex.test(value)) return setErrorState(true);
+
+        if (!regex?.test(value!)) return setErrorState(true);
         return setErrorState(false);
     }
 
@@ -28,31 +34,36 @@ function FormInput({name, type, required, error, onChange, value, regex}: formCo
         setFocused(true);
     }
 
-
-
     return (
-        <div className= {`mb-5 ${focused ? `focused` : ''}`}>
-            <label 
-                htmlFor={name}
-                className="
-                    block
-                    mb-2
-                    text-md
-                    font-medium
-                    text-gray-900
-                    dark:text-white
-                "
-            >
-                {name}
-            </label>
+        <div 
+            className= {`
+                ${marginBottom ? 'mb-5' : ''} 
+                ${focused ? `focused` : ''}
+            `}
+        >
+            { showLabel && 
+                <label 
+                    htmlFor={name}
+                    className="
+                        block
+                        mb-2
+                        text-md
+                        font-medium
+                        text-gray-900
+                        dark:text-white
+                    "
+                >
+                {displayName}
+                </label>
+            }
             <input
                 name={name}
                 type={type}
                 required={required}
-                placeholder={name}
+                placeholder={displayName}
                 value={value}
-                pattern={pattern}
-                onChange={onChange}
+                pattern={pattern ? regex?.toString() : undefined}
+                onChange={handleChange}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 className={`
@@ -73,19 +84,21 @@ function FormInput({name, type, required, error, onChange, value, regex}: formCo
                     focus:border-blue-500 
                     dark:focus:ring-blue-500 
                     dark:focus:border-blue-500
-                    ${errorState ? 'border-red-500': ''}
+                    ${(errorState && error) ? 'border-red-500': ''}
                 `}
             />
-            <span 
-                className={`
-                    error-message
-                    mt-2
-                    text-red-500
-                    ${errorState ? 'block' : 'hidden'} 
-                `}
-            >
-                {error}
-            </span>
+            {error &&
+                <span 
+                    className={`
+                        error-message
+                        mt-2
+                      text-red-500
+                        ${errorState ? 'block' : 'hidden'} 
+                    `}
+                >
+                    {error}
+                </span>
+            }
 
         </div>
     );
