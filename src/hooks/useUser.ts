@@ -8,7 +8,7 @@ export const useUser = () => {
     const { setItem } = useLocalStorage();
 
     const addUser = (user: User) => {
-        console.log('addUser',user);
+        // console.log('addUser',user);
         authContext.user = user;
         setItem('user', JSON.stringify(user));
     };

@@ -1,14 +1,13 @@
 import { useCallback, useState } from "react";
-import FormInput from "../components/FormInput";
+import FormInput from "../components/formInput";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
-import formUser from "../types/formUser";
 import formConfig from "../types/formConfig";
 import { useAuth } from "../hooks/useAuth";
-import User from "../types/User";
+import User, { FormUser } from "../types/User";
 import loginUser from "../axios/loginUser";
 
-const formInputs: formConfig<formUser>[] = [
+const formInputs: formConfig<FormUser>[] = [
     {
         id: 1,
         name: "username",
@@ -35,13 +34,13 @@ const formInputs: formConfig<formUser>[] = [
     },
 ];
 
-const initialValues: formUser = {
+const initialValues: FormUser = {
     username: '',
     password: '',
 };
 
 function Login() {
-    const [inputData, setValues] = useState<formUser>(initialValues);
+    const [inputData, setValues] = useState<FormUser>(initialValues);
     const { login } = useAuth();
     const navigate = useNavigate();
 

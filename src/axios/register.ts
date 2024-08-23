@@ -1,7 +1,7 @@
 import axios from "axios";
-import formRegister from "../types/formRegister";
+import { FormRegister } from "../types/User";
 
-const register = async (data: formRegister) => {
+const register = async (data: FormRegister) => {
     const { data: response } = await
     axios.post(import.meta.env.VITE_BASE_URL+'users/register', data, {
         headers: {

@@ -1,14 +1,13 @@
 import { useCallback, useState } from "react";
-import FormInput from "../components/FormInput";
+import FormInput from "../components/formInput";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import formConfig from "../types/formConfig";
-import formRegister from "../types/formRegister";
 import register from "../axios/register";
-import User from "../types/User";
+import User, { FormRegister } from "../types/User";
 import { useAuth } from "../hooks/useAuth";
 
-const formInputs: formConfig<formRegister>[] = [
+const formInputs: formConfig<FormRegister>[] = [
     {
         id: 1,
         name: "username",
@@ -59,7 +58,7 @@ const formInputs: formConfig<formRegister>[] = [
     },
 ];
 
-const initialValues: formRegister = {
+const initialValues: FormRegister = {
     username: '',
     password: '',
     firstName: '',
@@ -67,12 +66,12 @@ const initialValues: formRegister = {
 };
 
 function Register() {
-    const [inputData, setValues] = useState<formRegister>(initialValues);
+    const [inputData, setValues] = useState<FormRegister>(initialValues);
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const queryClient = useQueryClient();
-    const { mutate, isLoading, isError, error} = useMutation<User, {message: string}, formRegister>(register, {
+    const { mutate, isLoading, isError, error} = useMutation<User, {message: string}, FormRegister>(register, {
         onSuccess: (data: User) => {
             login(data);
             navigate('/chat');

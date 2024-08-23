@@ -22,6 +22,6 @@ export const useAuth = () => {
   const logout = () => {
     removeUser();
   };
-  console.log(user);
+  // console.log(user);
   return { user, login, logout };
 };

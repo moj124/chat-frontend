@@ -58,6 +58,7 @@ function FormInput({showLabel, marginBottom, name, type, required, error, onChan
             }
             <input
                 name={name}
+                id={name}
                 type={type}
                 required={required}
                 placeholder={displayName}

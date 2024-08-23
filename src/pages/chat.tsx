@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
-import UserMessage from "../types/UserMessage";
 import { io } from "socket.io-client";
 import { useAuth } from "../hooks/useAuth";
-
-// type sendUserMessage = Omit<UserMessage, 'id'>;
+import Conversation from "../types/Conversation";
+import { useQuery } from "react-query";
+import fetchConversationList from "../axios/fetchConversationList";
+import Message from "../types/Message";
+import SideBar from "../components/sideBar";
+import MessageForm from "../components/messageForm";
+import MessageText from "../components/message";
 
 const socket = io(import.meta.env.VITE_BASE_URL!, {autoConnect: false})
 
 function Chat() {
-    const [messages, setMessages] = useState<UserMessage[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+    const [selectedConversation, setSelectedConversations] = useState<Conversation | null>(null);
     const {user} = useAuth();
+
+    useQuery('conversations', fetchConversationList, {
+        onSuccess(data: Conversation[]) {
+            setConversations(data);
+        },
+    });
+
     useEffect(() => {
         socket.connect();
 
@@ -21,22 +34,44 @@ function Chat() {
             console.log('Socket disconnected');
         })
 
-        socket.on('chat', (newMessage) => {
-            console.log('New message added', newMessage);
-            setMessages((previousMessages) => [...previousMessages, newMessage]);
+        socket.on('chatCreateMessage', (messages: Message[]) => {
+            console.log('New message added', messages);
+            setMessages(messages);
         })
+
+        socket.on('chatCreateConversation', (newConversation: Conversation) => {
+            console.log('New conversation added', newConversation);
+            const formattedConversation: Conversation = {
+                ...newConversation,
+                createdAt: new Date(newConversation.createdAt),
+                updatedAt: new Date(newConversation.updatedAt),
+                deleteAt: newConversation.deleteAt ? new Date(newConversation.deleteAt): null,
+            }
+            setConversations((previousConversations) => [...previousConversations, formattedConversation]);
+            setSelectedConversations(formattedConversation);
+        })
+
+        socket.on('chatLoadConversation', (messages: Message[]) => {
+            setMessages(messages);
+        });
+
+        socket.on('chatDeleteConversation', (deletedConversation: Conversation) => {
+            setConversations((preConversations) => [...preConversations.filter((elem) => elem.id !== deletedConversation.id)]);
+        });
 
         return () => {
             socket.off('connect');
             socket.off('disconnect');
-            socket.off('chat');
+            socket.off('chatCreateMessage');
+            socket.off('chatCreateConversation');
+            socket.off('chatDeleteConversation');
+            socket.off('chatLoadConversation');
             socket.disconnect();
         }
     }, []);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('userContext Chat', user);
 
         // Retrieve the textarea value
         const form = e.target as HTMLFormElement;
@@ -44,77 +79,53 @@ function Chat() {
 
         if(!user) throw Error(`missing user: ${user}`);
 
-        socket.emit('chat', { userId: user.id, body: textareaValue.value.trim() });
+        socket.emit('chatCreateMessage', { conversationId: selectedConversation?.id,userId: user.id, message: textareaValue.value.trim()});
 
         textareaValue.value = '';
     };
 
+    const handleConversationClick = (elem: Conversation) => {
+        if (elem.id === selectedConversation?.id) return;
+        socket.emit('chatLoadConversation', {conversationId: elem.id});
+        setSelectedConversations(elem);
+    };
+
+    const handleNewConversationClick = () => {
+        socket.emit('chatCreateConversation', { name: conversations.length, participants: [user?.id], messages: []})
+    }
+
+    const handleDeleteConversationClick = (elem: Conversation, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        
+        if(elem.id === selectedConversation?.id) {
+            setSelectedConversations(null);
+            setMessages([]);
+        }
+        socket.emit('chatDeleteConversation', {conversationId: elem.id});
+    };
+
     return (
         <div className="grid grid-cols-3 h-screen">
-            <aside className="">
-
-            </aside>
+            <SideBar
+                conversations={conversations}
+                onClick={handleConversationClick}
+                onCreateClick={handleNewConversationClick}
+                onDeleteClick={handleDeleteConversationClick}
+            />
             <main className="col-span-2 flex flex-col">
-                <div className="h-full bg-gray-200">
-                    {messages.map((elem, idx) =>
-                        <div key={idx}>
-                            <p>{elem.body}</p>
-                            <p>{elem.userId}</p>
-                        </div>
+                {selectedConversation && 
+                    <div className="w-full">
+                        <h1 className="text-lg p-3">
+                            {selectedConversation.name}
+                        </h1>
+                    </div>
+                }
+                <div className="h-full w-full bg-gray-200 flex flex-col items-end">
+                    {messages.map(({message, createdAt}: Message, idx) =>
+                       <MessageText key={idx} message={message} createdAt={createdAt}/>
                     )}
                 </div>
-                <div className="h-10 w-full border-l-gray-300 border-l">
-                    <form 
-                        onSubmit={handleSubmit}
-                        className="
-                            flex
-                            flex-row
-                            h-full
-                            gap-1
-                            bg-gray-100
-                        "
-                    >   
-                        <div 
-                            className="
-                                w-full
-                                content-center
-                            "
-                        >
-                            <textarea
-                                id="multiline-input"
-                                rows={2}
-                                placeholder="Type your message here..."
-                                className="
-                                    w-full
-                                "
-                            />
-                        </div>
-                        <div className="w-20">
-                            <button
-                                type='submit'
-                                className="
-                                    w-full 
-                                    sm:w-auto 
-                                    text-sm 
-                                    px-5 
-                                    py-2.5 
-                                    text-center 
-                                    font-medium 
-                                    rounded-full
-                                    focus:ring-4 
-                                    focus:outline-none 
-                                    text-white 
-                                    bg-blue-500 
-                                    focus:ring-blue-300 
-                                    hover:bg-blue-800 
-                                    disabled:bg-blue-100 
-                                "
-                            >
-                                send
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <MessageForm onSubmit={handleSubmit} isDisabled={selectedConversation === null}/>
             </main>
         </div>
     );
