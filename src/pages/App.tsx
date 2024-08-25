@@ -5,6 +5,8 @@ import Login from "./login";
 import Register from "./register";
 import { AuthContext } from "../hooks/AuthContext";
 import { useAuth } from "../hooks/useAuth";
+import PrivateRoute from "../auth/privateRoute";
+import ErrorPage from "./ErrorPage";
 
 const queryClient = new QueryClient();
 
@@ -16,9 +18,17 @@ const App = () => {
         <AuthContext.Provider value={{user}}>
           <BrowserRouter>
             <Routes>
-              <Route path='/' element={<Login />}></Route>
-              <Route path='/register' element={<Register />}></Route>
-              <Route path='/chat' element={<Chat />}></Route>
+              <Route path='/' element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route 
+                path="/chat"
+                element={
+                  <PrivateRoute>
+                    <Chat />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="*" element={<ErrorPage />} />
             </Routes>
           </BrowserRouter>
         </AuthContext.Provider>
