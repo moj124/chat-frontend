@@ -34,7 +34,7 @@ const formInputs: formConfig<FormRegister>[] = [
     },
     {
         id: 3,
-        name: "firstName",
+        name: "firstname",
         displayName: "First Name",
         type: "text",
         pattern: false,
@@ -46,7 +46,7 @@ const formInputs: formConfig<FormRegister>[] = [
     },
     {
         id: 4,
-        name: "lastName",
+        name: "lastname",
         displayName: "Last Name",
         pattern: false,
         type: "text",
@@ -61,8 +61,8 @@ const formInputs: formConfig<FormRegister>[] = [
 const initialValues: FormRegister = {
     username: '',
     password: '',
-    firstName: '',
-    lastName: '',
+    firstname: '',
+    lastname: '',
 };
 
 function Register() {
