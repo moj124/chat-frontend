@@ -3,8 +3,8 @@ type Message = {
   userId: number;
   conversationId: number;
   message: string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
+  createdat: Date | string;
+  updatedat: Date | string;
   deleteAt: Date | string | null;
 }
 export default Message;

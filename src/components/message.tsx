@@ -1,8 +1,8 @@
 import Message from "../types/Message";
 
-type MessageTextProps = Pick<Message, 'message' | 'createdAt'>;
+type MessageTextProps = Pick<Message, 'message' | 'createdat'>;
 
-const MessageText = ({message, createdAt}: MessageTextProps) => {
+const MessageText = ({message, createdat}: MessageTextProps) => {
     return ( 
         <div 
             className="
@@ -21,7 +21,7 @@ const MessageText = ({message, createdAt}: MessageTextProps) => {
                 {message}
             </p>
             <p className="p-1 float-right text-xs">
-                {createdAt.toLocaleString()}
+                {createdat.toLocaleString()}
             </p>
         </div>
     );

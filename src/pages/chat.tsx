@@ -43,8 +43,8 @@ function Chat() {
             console.log('New conversation added', newConversation);
             const formattedConversation: Conversation = {
                 ...newConversation,
-                createdAt: new Date(newConversation.createdAt),
-                updatedAt: new Date(newConversation.updatedAt),
+                createdat: new Date(newConversation.createdat),
+                updatedat: new Date(newConversation.updatedat),
                 deleteAt: newConversation.deleteAt ? new Date(newConversation.deleteAt): null,
             }
             setConversations((previousConversations) => [...previousConversations, formattedConversation]);
@@ -121,8 +121,8 @@ function Chat() {
                     </div>
                 }
                 <div className="h-full w-full bg-gray-200 flex flex-col items-end">
-                    {messages.map(({message, createdAt}: Message, idx) =>
-                       <MessageText key={idx} message={message} createdAt={createdAt}/>
+                    {messages.map(({message, createdat}: Message, idx) =>
+                       <MessageText key={idx} message={message} createdat={createdat}/>
                     )}
                 </div>
                 <MessageForm onSubmit={handleSubmit} isDisabled={selectedConversation === null}/>

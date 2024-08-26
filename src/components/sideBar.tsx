@@ -40,7 +40,7 @@ function SideBar({ conversations, onCreateClick, onClick, onDeleteClick }: SideB
                                 X
                             </button>
                         </div>
-                        <p>{dateToString(elem.updatedAt)}</p>
+                        <p>{dateToString(elem.updatedat)}</p>
                     </div>
                 )}
             </div>

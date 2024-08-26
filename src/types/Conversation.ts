@@ -3,8 +3,8 @@ type Conversation = {
     name: string,
     participants: number[],
     messages: number[],
-    createdAt: Date | string,
-    updatedAt: Date | string,
+    createdat: Date | string,
+    updatedat: Date | string,
     deleteAt: Date | string | null,
 };
 export default Conversation;
